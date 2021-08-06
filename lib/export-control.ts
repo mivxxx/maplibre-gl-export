@@ -1,7 +1,7 @@
 import { IControl, Map as MaplibreMap } from 'maplibre-gl';
 import CrosshairManager from './crosshair-manager';
 import MapGenerator, {
-  Size, Format, PageOrientation, DPI, Unit,
+  Size, Format, PageOrientation, DPI, Unit, Image
 } from './map-generator';
 
 type Options = {
@@ -35,6 +35,8 @@ export default class MaplibreExportControl implements IControl {
       Crosshair: false,
     }
 
+    #imageList?: Image[];
+
     constructor(options: Options) {
       if (options) {
         this.options = Object.assign(this.options, options);
@@ -45,6 +47,10 @@ export default class MaplibreExportControl implements IControl {
     public getDefaultPosition(): string {
       const defaultPosition = 'top-right';
       return defaultPosition;
+    }
+
+    set imageList(imageList: Image[]) {
+      this.#imageList = imageList;
     }
 
     public onAdd(map: MaplibreMap): HTMLElement {
@@ -110,6 +116,7 @@ export default class MaplibreExportControl implements IControl {
           Number(dpiType.value),
           formatType.value,
           Unit.mm,
+          this.#imageList,
         );
         mapGenerator.generate();
       });

@@ -83,6 +83,8 @@ export const DPI = {
 } as const;
 type DPI = typeof DPI[keyof typeof DPI];
 
+export type Image = { name: string; url: string; options?: {sdf?: boolean} };
+
 export default class MapGenerator {
   private map: MaplibreMap;
 
@@ -95,6 +97,8 @@ export default class MapGenerator {
   private format: string;
 
   private unit: Unit;
+
+  private imageList?: Image[];
 
   /**
    * Constructor
@@ -110,6 +114,7 @@ export default class MapGenerator {
     dpi: number = 300,
     format:string = Format.PNG.toString(),
     unit: Unit = Unit.mm,
+    imageList?: Image[],
   ) {
     this.map = map;
     this.width = size[0];
@@ -117,6 +122,7 @@ export default class MapGenerator {
     this.dpi = dpi;
     this.format = format;
     this.unit = unit;
+    this.imageList = imageList;
   }
 
   /**
@@ -173,6 +179,7 @@ export default class MapGenerator {
       // hack to read transfrom request callback function
       transformRequest: (this.map as any)._requestManager._transformRequestFn,
     });
+    MapGenerator.addImages(renderMap, this.imageList);
     const style = this.map.getStyle();
     if (style && style.sources) {
       const sources = style.sources;
@@ -217,6 +224,19 @@ export default class MapGenerator {
 
       // @ts-ignore
       JsLoadingOverlay.hide();
+    });
+  }
+
+  private static addImages(renderMap: MaplibreMap, imageList: Image[] = [], callback?: Function) {
+    let loadedImagesCount = 0;
+    imageList.forEach(({ name, url, options }) => {
+      renderMap.loadImage(url, (error: any, image: any) => {
+        renderMap.addImage(name, image, options);
+        loadedImagesCount += 1;
+        if (callback && loadedImagesCount === imageList.length) {
+          callback();
+        }
+      });
     });
   }
 
