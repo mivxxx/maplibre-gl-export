@@ -10,6 +10,7 @@
     "lint:fix": "eslint --fix lib/**/*.ts",
     "build": "tsc && webpack --mode production --config webpack.config.js",
     "dev": "webpack serve --mode development --open --hot --inline --config webpack.config.js",
+    "prepare": "npm run build",
     "deploy": "gh-pages -d example -m 'deploy to gh-pages'"
   },
   "keywords": [
