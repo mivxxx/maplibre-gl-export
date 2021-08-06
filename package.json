@@ -4,10 +4,6 @@
   "description": "This module adds control which can export PDF and images.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "css"
-  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint lib/**/*.ts",
